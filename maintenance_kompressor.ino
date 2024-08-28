@@ -9,13 +9,13 @@
 #define PRESSURE_SENSOR_PIN A0 // Connect Pressure Sensor OUT pin to A0 (Analog Input) on WeMos D1 R2
 
 // WiFi credentials
-const char* ssid = "Fauzi Surya Fazri"; // Your WiFi SSID
-const char* password = "123456789"; // Your WiFi password
+const char* ssid = "Fauzi Surya Fazri"; 
+const char* password = "123456789";  
 
 // Google Apps Script endpoint
 const char* host = "script.google.com";
 const int httpsPort = 443;
-const char* googleScriptId = "AKfycbzkb6DMZmEyOoM5edeVdXy31ixg6HB5ZUobKO2H7-dggW87dcoPQH6lQmED7bxNtm58iw"; // Replace with your Google Script ID
+const char* googleScriptId = "AKfycbzkb6DMZmEyOoM5edeVdXy31ixg6HB5ZUobKO2H7-dggW87dcoPQH6lQmED7bxNtm58iw"; 
 
 // SHA1 fingerprint of the certificate
 const char* fingerprint = "A9:52:08:E0:FC:37:B4:6B:5F:CF:C5:AB:C4:10:C7:D6:00:4D:DC:69";
@@ -26,7 +26,7 @@ const char* fingerprint = "A9:52:08:E0:FC:37:B4:6B:5F:CF:C5:AB:C4:10:C7:D6:00:4D
 
 // Create instances
 Adafruit_MLX90614 mlx = Adafruit_MLX90614();
-LiquidCrystal_I2C lcd(0x27, 16, 2); // Initialize for 16x2 LCD
+LiquidCrystal_I2C lcd(0x27, 16, 2); 
 WiFiClientSecure client;
 
 // Variables for display control
@@ -35,9 +35,9 @@ const long interval = 2000; // Interval for switching display (2 seconds)
 int displayState = 0;
 
 // Pressure sensor constants
-const int pressureZero = 102.4; // Analog reading of pressure transducer at 0psi
-const int pressureMax = 921.6; // Analog reading of pressure transducer at 100psi
-const int pressuretransducermaxPSI = 100; // PSI value of transducer being used
+const int pressureZero = 102.4; 
+const int pressureMax = 921.6; 
+const int pressuretransducermaxPSI = 100; 
 
 void setup() {
     Serial.begin(9600);
@@ -93,12 +93,11 @@ void loop() {
     int Temperature = (int)objectTemp;
 
     // Read pressure from Pressure Sensor
-    float pressureValue = analogRead(PRESSURE_SENSOR_PIN); // Reads value from input pin and assigns to variable
-    float pressure = ((pressureValue - pressureZero) * pressuretransducermaxPSI) / (pressureMax - pressureZero); // Conversion equation to convert analog reading to psi
-
-    // Determine status based on temperature and pressure
+    float pressureValue = analogRead(PRESSURE_SENSOR_PIN);
+    float pressure = ((pressureValue - pressureZero) * pressuretransducermaxPSI) / (pressureMax - pressureZero);
+    
     int tempStatus = getStatus(Temperature, 33, 35);
-    int pressureStatus = getStatus(pressure, 50, 100); // Example status thresholds
+    int pressureStatus = getStatus(pressure, 50, 100); 
 
     if (isnan(objectTemp)) {
         Serial.println("Failed to read from MLX90614 sensor!");
@@ -121,7 +120,7 @@ void loop() {
         unsigned long currentMillis = millis();
         if (currentMillis - previousMillis >= interval) {
             previousMillis = currentMillis;
-            displayState = (displayState + 1) % 2; // Toggle between 0 and 1
+            displayState = (displayState + 1) % 2;
 
             lcd.clear();
             if (displayState == 0) {
@@ -144,7 +143,7 @@ void loop() {
         }
     }
 
-    delay(500); // Shorter delay to allow for more frequent display updates
+    delay(500); 
 }
 
 int getStatus(float value, float min, float max) {
@@ -161,7 +160,7 @@ void sendData(int Temperature, float Pressure, int tempStatus, int pressureStatu
     Serial.print("Connecting to ");
     Serial.println(host);
 
-    client.setFingerprint(fingerprint); // Use setFingerprint instead of verify
+    client.setFingerprint(fingerprint); 
 
     if (!client.connect(host, httpsPort)) {
         Serial.println("Connection failed");

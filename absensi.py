@@ -3,49 +3,66 @@ import mysql.connector
 import pandas as pd
 from PIL import Image
 import os
-
+from datetime import datetime
 
 conn = mysql.connector.connect(
     host='localhost',
-    user='root',  
-    password='',  
+    user='root',
+    password='',
     database='belajar'
 )
 cursor = conn.cursor(dictionary=True)
 
-
 def load_data():
-    cursor.execute("SELECT * FROM face_recognition")
+    cursor.execute("SELECT * FROM face_recognition WHERE DATE(timestamp) = CURDATE()")
     records = cursor.fetchall()
     return pd.DataFrame(records)
 
-# Muat data dari MySQL
+siswa_list = ['Aditya', 'Kemal']
+
 data = load_data()
 
-# Tampilkan tabel data di Streamlit
 st.write("Data dari tabel face_recognition:")
 st.write(data)
 
+st.write("Kehadiran siswa hari ini:")
 
-st.write("Gambar yang disimpan:")
+attendance_table = pd.DataFrame(columns=["Nama Siswa", "Kehadiran", "Gambar"])
 
-num_cols = 3  # Tentukan jumlah kolom
-for i in range(0, len(data), num_cols):
+for siswa in siswa_list:
+    siswa_data = data[data['name'].str.lower() == siswa.lower()]
+    
+    if not siswa_data.empty:
+        new_row = pd.DataFrame({
+            "Nama Siswa": [siswa],
+            "Kehadiran": ["✔️"],
+            "Gambar": [siswa_data.iloc[-1]['image_path']]
+        })
+    else:
+        new_row = pd.DataFrame({
+            "Nama Siswa": [siswa],
+            "Kehadiran": ["❌"],
+            "Gambar": [None]
+        })
+    
+    attendance_table = pd.concat([attendance_table, new_row], ignore_index=True)
+
+num_cols = 3
+for i in range(0, len(attendance_table), num_cols):
     cols = st.columns(num_cols)
     for j, col in enumerate(cols):
-        if i + j < len(data):
-            row = data.iloc[i + j]
-            image_path = row['image_path']
-            if os.path.exists(image_path):
-                image = Image.open(image_path)
-                image = image.resize((150, 150))  # Resize gambar ke 150x150 pixel
-                col.image(image, caption=f"{row['name']} ({row['timestamp']})", use_column_width=True)
-                col.write(f"ID: {row['id']}")
-                col.write(f"Nama: {row['name']}")
-                col.write(f"Timestamp: {row['timestamp']}")
+        if i + j < len(attendance_table):
+            row = attendance_table.iloc[i + j]
+            col.write(f"Nama: {row['Nama Siswa']}")
+            col.write(f"Kehadiran: {row['Kehadiran']}")
+            if row['Gambar']:
+                image_path = row['Gambar']
+                if os.path.exists(image_path):
+                    image = Image.open(image_path)
+                    image = image.resize((150, 150))
+                    col.image(image, caption=f"{row['Nama Siswa']} ({row['Kehadiran']})", use_column_width=True)
             else:
-                col.write(f"Gambar tidak ditemukan di {image_path}")
+                col.write("Tidak ada gambar tersedia.")
 
-# Tutup koneksi MySQL
 cursor.close()
 conn.close()

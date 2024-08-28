@@ -4,16 +4,16 @@ import pandas as pd
 from PIL import Image
 import os
 
-# Koneksi ke MySQL database `belajar`
+
 conn = mysql.connector.connect(
     host='localhost',
-    user='root',  # Sesuaikan dengan username MySQL Anda
-    password='',  # Kosongkan jika tidak ada password
-    database='belajar'  # Nama database yang digunakan
+    user='root',  
+    password='',  
+    database='belajar'
 )
 cursor = conn.cursor(dictionary=True)
 
-# Fungsi untuk memuat data dari tabel face_recognition
+
 def load_data():
     cursor.execute("SELECT * FROM face_recognition")
     records = cursor.fetchall()
@@ -26,7 +26,7 @@ data = load_data()
 st.write("Data dari tabel face_recognition:")
 st.write(data)
 
-# Tampilkan gambar dengan informasi dalam layout kolom
+
 st.write("Gambar yang disimpan:")
 
 num_cols = 3  # Tentukan jumlah kolom

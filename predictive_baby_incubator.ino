@@ -7,16 +7,16 @@
 #include <RTClib.h>
 
 // ZMPT101B sensor pin
-#define ZMPT101B_PIN A0 // Connect ZMPT101B OUT pin to A0 (Analog Input) on WeMos D1 R2
+#define ZMPT101B_PIN A0 
 
 // WiFi credentials
-const char* ssid = "wifi"; // Your WiFi SSID
-const char* password = "kucin123"; // Your WiFi password
+const char* ssid = "wifi";
+const char* password = "kucin123";
 
 // Google Apps Script endpoint
 const char* host = "script.google.com";
 const int httpsPort = 443;
-const char* googleScriptId = "AKfycbzaPuB7GuMhKg0i9idfXV6S8e03FhJfuZVM50COGOgIfPMcbL3-455NkpV6sA9-tCou"; // Replace with your Google Script ID
+const char* googleScriptId = "AKfycbzaPuB7GuMhKg0i9idfXV6S8e03FhJfuZVM50COGOgIfPMcbL3-455NkpV6sA9-tCou";
 
 // SHA1 fingerprint of the certificate
 const char* fingerprint = "5A:DA:6A:A7:18:DA:E0:89:56:E6:D0:10:8F:43:AA:03:9F:70:8F:BF";
@@ -28,22 +28,22 @@ WiFiClientSecure client;
 RTC_DS1307 rtc;
 
 // Variables for RMS calculation
-int decimalPrecision = 2; // decimal places for all values shown in LED Display & Serial Monitor
-float voltageSampleRead  = 0; // to read the value of a sample in analog including voltageOffset1
-float voltageLastSample  = 0; // to count time for each sample. Technically 1 milli second 1 sample is taken
-float voltageSampleSum   = 0; // accumulation of sample readings
-float voltageSampleCount = 0; // to count number of sample.
-float voltageMean; // to calculate the average value from all samples, in analog values
-float RMSVoltageMean; // square root of voltageMean without offset value, in analog value
-float FinalRMSVoltage; // final voltage value with offset value
+int decimalPrecision = 2; 
+float voltageSampleRead  = 0;
+float voltageLastSample  = 0;
+float voltageSampleSum   = 0;
+float voltageSampleCount = 0;
+float voltageMean;
+float RMSVoltageMean;
+float FinalRMSVoltage; //
 
 // AC Voltage Offset
-float voltageOffset1 = 0.00; // to Offset deviation and accuracy. Offset any fake current when no current operates.
-float voltageOffset2 = 0.00; // too offset value due to calculation error from squared and square root
+float voltageOffset1 = 0.00;
+float voltageOffset2 = 0.00;
 
 // Variables for display control
 unsigned long previousMillis = 0;
-const long interval = 2000; // Interval for switching display (2 seconds)
+const long interval = 2000; 
 int displayState = 0;
 
 void setup() {
@@ -104,7 +104,7 @@ void setup() {
 
 void loop() {
     DateTime now = rtc.now();
-    TimeSpan elapsed = now - DateTime(2000, 1, 1, 0, 0, 0); // Calculate elapsed time since timer start
+    TimeSpan elapsed = now - DateTime(2000, 1, 1, 0, 0, 0); 
     String elapsedTime = String(elapsed.hours()) + ":" + String(elapsed.minutes()) + ":" + String(elapsed.seconds());
 
     // Read temperature from MLX90614
@@ -143,7 +143,7 @@ void loop() {
         unsigned long currentMillis = millis();
         if (currentMillis - previousMillis >= interval) {
             previousMillis = currentMillis;
-            displayState = (displayState + 1) % 2; // Toggle between 0 and 1
+            displayState = (displayState + 1) % 2; 
 
             lcd.clear();
             if (displayState == 0) {
@@ -171,20 +171,20 @@ void loop() {
 
 void readVoltage() {
     for (int i = 0; i < 1000; i++) {
-        voltageSampleRead = (analogRead(ZMPT101B_PIN) - 512) + voltageOffset1; // read the sample value including offset value
-        voltageSampleSum += sq(voltageSampleRead); // accumulate total analog values for each sample readings
-        delayMicroseconds(1000); // delay 1 millisecond between each sample
+        voltageSampleRead = (analogRead(ZMPT101B_PIN) - 512) + voltageOffset1; 
+        voltageSampleSum += sq(voltageSampleRead); 
+        delayMicroseconds(1000); 
     }
 
-    voltageMean = voltageSampleSum / 1000; // calculate average value of all sample readings taken
-    RMSVoltageMean = (sqrt(voltageMean)) * 1.5; // The value X 1.5 means the ratio towards the module amplification
-    FinalRMSVoltage = RMSVoltageMean + voltageOffset2; // this is the final RMS voltage
+    voltageMean = voltageSampleSum / 1000;
+    RMSVoltageMean = (sqrt(voltageMean)) * 1.5;
+    FinalRMSVoltage = RMSVoltageMean + voltageOffset2;
 
-    if (RMSVoltageMean <= 75.00) { // to ensure no ghost value, set a threshold to detect no voltage
+    if (RMSVoltageMean <= 75.00) { 
         FinalRMSVoltage = 0.00;
     }
 
-    voltageSampleSum = 0; // to reset accumulate sample values for the next cycle
+    voltageSampleSum = 0; 
 }
 
 int getStatus(float value, float min, float max) {
@@ -201,7 +201,7 @@ void sendData(String elapsedTime, int Temperature, float Voltage, int tempStatus
     Serial.print("Connecting to ");
     Serial.println(host);
 
-    client.setFingerprint(fingerprint); // Use setFingerprint instead of verify
+    client.setFingerprint(fingerprint); 
 
     if (!client.connect(host, httpsPort)) {
         Serial.println("Connection failed");

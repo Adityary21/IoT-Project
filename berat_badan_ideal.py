@@ -94,13 +94,13 @@ if st.button('mulai'):
     st.write("Data from Google Sheets:")
     st.write(data)
 
-    # Memproses data yang dimuat (Contoh: menghitung rata-rata tinggi dan berat)
+    # Memproses data yang dimuat 
     if not data.empty:
         latest_data = data.iloc[-1]  # Menggunakan baris terakhir dari dataframe
         height = latest_data["Height"]
         weight = latest_data["Weight"]
         
-        # Memastikan tinggi dan berat berada dalam rentang yang valid
+        # Memastikan tinggi dan berat berada dalam rentang yang di inginkan
         if height > 250.0:
             height = 250.0
         elif height < 0.0:

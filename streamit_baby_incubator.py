@@ -17,7 +17,7 @@ scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/au
 creds = ServiceAccountCredentials.from_json_keyfile_name('data-monitoring-424622-f89eeef34709.json', scope)
 client = gspread.authorize(creds)
 
-# Memuat model dan scaler yang sudah disimpan
+# Memuat model dan scaler 
 rf_temp = joblib.load('temp_model.joblib')
 rf_volt = joblib.load('volt_model.joblib')
 scaler = joblib.load('scaler_rf.joblib')
@@ -72,7 +72,6 @@ def proses_spreadsheet(data):
         suhu = row['Temperature']
         tegangan = row['Voltage']
         time = row['Timestamp']
-        # Ubah timestamp agar sesuai dengan waktu sekarang
         time = datetime.now().replace(hour=time.hour, minute=time.minute, second=time.second, microsecond=0)
         temp_status = prediksi_status(suhu, tegangan, rf_temp)
         volt_status = prediksi_status(suhu, tegangan, rf_volt)
@@ -271,7 +270,7 @@ def plot_grafik(suhu_list, tegangan_list, temp_status_list, volt_status_list, ti
         )
         st.plotly_chart(fig_volt_status)
 
-        # Peringatan TempStatus rendah atau tinggi hanya untuk data terbaru
+        
         if temp_status_list[-1] == 1:
             st.warning(f"Warning: TempStatus is LOW at {time_list[-1]}")
         elif temp_status_list[-1] == 3:
@@ -279,7 +278,7 @@ def plot_grafik(suhu_list, tegangan_list, temp_status_list, volt_status_list, ti
         else:
             st.success(f"TempStatus is NORMAL at {time_list[-1]}")
 
-        # Peringatan VoltStatus rendah atau tinggi hanya untuk data terbaru
+        
         if volt_status_list[-1] == 1:
             st.warning(f"Warning: VoltStatus is LOW at {time_list[-1]}")
         elif volt_status_list[-1] == 3:
@@ -502,16 +501,16 @@ def perbarui_visualisasi(sheet, chart_placeholder, last_data):
     return data
 
 def main():
-    st.set_page_config(page_title="Aplikasi Monitoring Suhu dan Tegangan", layout="wide", initial_sidebar_state="expanded", page_icon="🐣")
+    st.set_page_config(page_title="Aplikasi Monitoring Suhu dan Tegangan Inkubator Bayi", layout="wide", initial_sidebar_state="expanded", page_icon="🐣")
     
-    # Sidebar dengan logo dan gambar di atas menu
+    
     with st.sidebar:
         st.markdown(
             """
             <div style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <img src="https://raw.githubusercontent.com/sahirmaharaj/exifa/main/img/Exifa.gif" alt="logo" style="width: 60px; height: 60px;">
-                    <span style="font-family: 'Cursive', sans-serif; font-size: 24px; color: white; animation: fadeIn 2s infinite;">𝔹𝕦𝕚𝕝𝕥 𝕓𝕪 𝕊𝕪𝕒𝕙𝕣𝕦𝕝 𝔸𝕓𝕚𝕕𝕚𝕟 𝔸 𝕐𝕒𝕟𝕚</span>
+                    <span style="font-family: 'Cursive', sans-serif; font-size: 24px; color: white; animation: fadeIn 2s infinite;">𝔹𝕦𝕚𝕝𝕥 𝕓𝕪 Aditya Ryan Mahendra </span>
                 </div>
                 <div style="margin-top: 20px;">
                     <img src="https://img.freepik.com/premium-photo/sweet-funny-baby-chick-wearing-fashion-sunglasses-generative-ai_666746-909.jpg?w=826" style="width: 100%;">
@@ -533,24 +532,8 @@ def main():
         st.markdown("<div style='margin-top: 20px;'></div>", unsafe_allow_html=True)
         with st.expander("🛠 Model Configuration"):
             model_page = st.selectbox("Pilih Halaman Model", ["Monitoring", "Prediksi 30 Hari"])
-        
-        # Menambahkan logo WhatsApp, Instagram, dan Email GIF dengan jarak dan posisi
-        st.markdown(
-            """
-            <div style="margin-top: 20px;">
-                <a href="https://wa.me/085890243536" target="_blank" style="margin-right: 20px;">
-                    <img src="https://raw.githubusercontent.com/sahirmaharaj/exifa/main/img/topmate.gif" alt="WhatsApp" style="width: 40px; height: 40px;">
-                </a>
-                <a href="https://www.instagram.com/oyyrulll" target="_blank" style="margin-right: 20px;">
-                    <img src="https://raw.githubusercontent.com/sahirmaharaj/exifa/main/img/newsletter.gif" alt="Instagram" style="width: 40px; height: 40px;">
-                </a>
-                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=syahrul.abidin234@gmail.com" target="_blank">
-                    <img src="https://raw.githubusercontent.com/sahirmaharaj/exifa/main/img/email.gif" alt="Email" style="width: 40px; height: 40px;">
-                </a>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
+
+   
 
     if main_page == "Home":
         st.write("<h1 style='text-align: center; color: white;'>Aplikasi Monitoring Suhu dan Tegangan</h1>", unsafe_allow_html=True)
@@ -575,7 +558,7 @@ def main():
         - Streamlit untuk tampilan antarmuka pengguna yang interaktif.
                  
         **Pengembang**
-        syahrul abidin a yani
+        Aditya Ryan Mahendra
         """)
 
     if model_page == "Monitoring":
@@ -591,7 +574,7 @@ def main():
         while auto_update:
             with chart_placeholder.container():
                 last_data = perbarui_visualisasi(sheet, chart_placeholder, last_data)
-            time.sleep(15)  # Check for updates every 15 seconds
+            time.sleep(15)  
         
         st.write("Pembaruan otomatis dihentikan.")
     

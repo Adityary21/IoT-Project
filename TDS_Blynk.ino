@@ -22,24 +22,23 @@ float temperature = 25,tdsValue = 0;
 // BLYNK_CONNECTED() {}
 
 
-//char ssid[] = "wifi";  // type your wifi name
-//char pass[] = "12345678";  // type your wifi passwor
-  //Blynk.syncVirtual(button1_vpin);
+//char ssid[] = "wifi";  
+//char pass[] = "12345678";  
 
 void setup()
 {
   Blynk.begin(BLYNK_AUTH_TOKEN, "wifi", "kucin123");
     Serial.begin(9600);
     gravityTds.setPin(TdsSensorPin);
-    gravityTds.setAref(3.3);  //reference voltage on ADC, default 5.0V on Arduino UNO
-    gravityTds.setAdcRange(4096);  //1024 for 10bit ADC;4096 for 12bit ADC
-    gravityTds.begin();  //initialization
+    gravityTds.setAref(3.3);
+    gravityTds.setAdcRange(4096);
+    gravityTds.begin();  
     timer.setInterval(2500L, sendSensor);
 }
 void loop()
 {
-//    temperature = readTemperature();  //add your temperature sensor and read it
-    //gravityTds.setTemperature(temperature);  // set the temperature and execute temperature compensation
+//    temperature = readTemperature();  //pembacaan sensor temperature
+    //gravityTds.setTemperature(temperature);  // 
      Blynk.run();
      timer.run();
    
@@ -47,8 +46,8 @@ void loop()
 
 void sendSensor()
 {
-   gravityTds.update();  //sample and calculate
-    tdsValue = gravityTds.getTdsValue();  // then get the value
+   gravityTds.update();  
+    tdsValue = gravityTds.getTdsValue();
     Serial.print(tdsValue,0);
     Serial.println("ppm");
     delay(1000);

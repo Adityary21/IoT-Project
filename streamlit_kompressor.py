@@ -16,7 +16,7 @@ scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/au
 creds = ServiceAccountCredentials.from_json_keyfile_name('monitoring-426117-1a045c8861ad.json', scope)
 client = gspread.authorize(creds)
 
-# Memuat model dan scaler yang sudah disimpan
+
 rf_temp = joblib.load('C:\\Users\\ari20\\model\\tempmodel1.joblib')
 rf_pressure = joblib.load('C:\\Users\\ari20\\model\\pressuremodel1.joblib')
 scaler = joblib.load('C:\\Users\\ari20\\model\\scaler_rf1.joblib')
@@ -35,7 +35,7 @@ def bersihkan_data(data):
     data = data.drop_duplicates()
     data = data.dropna(subset=['Temperature', 'Pressure'])
     
-    # Pastikan hanya kolom numerik yang digunakan untuk perhitungan IQR
+    
     numeric_cols = ['Temperature', 'Pressure']
     Q1 = data[numeric_cols].quantile(0.25)
     Q3 = data[numeric_cols].quantile(0.75)
@@ -182,7 +182,7 @@ def plot_grafik(suhu_list, tekanan_list, temp_status_list, pressure_status_list,
             st.success(f"PressureStatus is NORMAL at {time_list[-1]}")
 
 def perbarui_visualisasi(sheet, chart_placeholder, last_data):
-    # Tentukan header yang diharapkan
+    
     expected_headers = ['Timestamp', 'Temperature', 'Pressure']
 
     data = pd.DataFrame(sheet.get_all_records(expected_headers=expected_headers))
@@ -195,11 +195,11 @@ def perbarui_visualisasi(sheet, chart_placeholder, last_data):
         plot_grafik(suhu_list, tekanan_list, temp_status_list, pressure_status_list, time_list, chart_placeholder)
     return data
 
-# Fungsi utama untuk aplikasi Streamlit
+#  aplikasi Streamlit
 def main():
     st.set_page_config(page_title="Aplikasi Monitoring Suhu dan Tekanan", layout="wide", initial_sidebar_state="expanded", page_icon="🤖")
     
-    # Menggunakan streamlit-option-menu untuk navbar yang lebih interaktif
+    
     with st.sidebar:
         choice = option_menu(
             "Menu",
@@ -233,13 +233,13 @@ def main():
         chart_placeholder = st.empty()
         last_data = pd.DataFrame()
 
-        # Placeholder untuk memulai/menghentikan pembaruan otomatis
+        
         auto_update = st.checkbox('Mulai Pembaruan Otomatis', value=True)
         
         while auto_update:
             with chart_placeholder.container():
                 last_data = perbarui_visualisasi(sheet, chart_placeholder, last_data)
-            time.sleep(15)  # Check for updates every 15 seconds
+            time.sleep(15)  
         
         st.write("Pembaruan otomatis dihentikan.")
     
